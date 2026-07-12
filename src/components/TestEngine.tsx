@@ -171,10 +171,19 @@ export const TestEngine: React.FC<TestEngineProps> = ({
         const seenImages = new Set<string>();
         const shuffled = [...words].sort(() => 0.5 - Math.random());
         
+        // Extract the core emoji character to completely ignore invisible variations
+        const cleanEmoji = (str: string) => {
+          if (!str) return "";
+          // Find the first surrogate pair (most emojis) or fallback to the first character
+          const match = str.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/);
+          return match ? match[0] : str.charAt(0);
+        };
+
         // Priority 1: Words with non-generic, unique illustrations
         for (const w of shuffled) {
-          if (!genericEmojis.includes(w.illustration) && !seenImages.has(w.illustration)) {
-            seenImages.add(w.illustration);
+          const cleaned = cleanEmoji(w.illustration);
+          if (!genericEmojis.includes(cleaned) && !seenImages.has(cleaned)) {
+            seenImages.add(cleaned);
             uniqueIllustrationWords.push(w);
           }
         }
@@ -182,8 +191,9 @@ export const TestEngine: React.FC<TestEngineProps> = ({
         // Priority 2: If we still need more, use generic but unique illustrations
         if (uniqueIllustrationWords.length < 3) {
           for (const w of shuffled) {
-            if (!seenImages.has(w.illustration)) {
-              seenImages.add(w.illustration);
+            const cleaned = cleanEmoji(w.illustration);
+            if (!seenImages.has(cleaned)) {
+              seenImages.add(cleaned);
               uniqueIllustrationWords.push(w);
             }
             if (uniqueIllustrationWords.length >= 3) break;
