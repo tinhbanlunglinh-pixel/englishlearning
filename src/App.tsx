@@ -1192,16 +1192,23 @@ export default function App() {
     playSound.playClick();
 
     try {
+
+      const bodyPayload: any = { level: studentLevel };
+      if (createMethod === "topic") {
+        bodyPayload.topic = studentTopic || undefined;
+      } else if (createMethod === "text") {
+        bodyPayload.rawContent = studentRawContent || undefined;
+      } else if (createMethod === "image") {
+        if (studentUploadedFile) {
+          bodyPayload.fileData = studentUploadedFile.base64;
+          bodyPayload.fileMime = studentUploadedFile.type;
+        }
+      }
+
       const response = await fetch("/api/generate-lesson", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          topic: studentTopic || undefined,
-          rawContent: studentRawContent || undefined,
-          level: studentLevel,
-          fileData: studentUploadedFile ? studentUploadedFile.base64 : undefined,
-          fileMime: studentUploadedFile ? studentUploadedFile.type : undefined,
-        }),
+        body: JSON.stringify(bodyPayload),
       });
 
       const data = await response.json();

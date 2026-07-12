@@ -710,8 +710,8 @@ app.post("/api/generate-lesson", async (req: Request, res: Response) => {
 
       prompt = `Please analyze the uploaded document or image to extract English vocabulary words and complete sentences appropriate for this level: ${ageRange}.
 
-CRITICAL SYSTEM REQUIREMENTS (GIỮ NGUYÊN ĐẦU VÀO - KHÔNG SÁNG TẠO):
-1. PRESERVE ORIGINAL CONTENT: You MUST extract and output the EXACT English words and matching sentences appearing in the uploaded file/image. Do NOT create, alter, or replace them with custom sentences or vocabulary. Keep them exactly as they are in the file. Do not be creative.
+CRITICAL SYSTEM REQUIREMENTS (GIỮ NGUYÊN ĐẦU VÀO - KHÔNG THÊM BỚT):
+1. EXTRACT & PRESERVE: Extract ALL the English words and sentences from the uploaded file/image. You MUST keep the EXACT number of vocabulary items and the EXACT content provided. Do not add any extra words, and do not remove any. As an expert teacher, fix grammatical errors but do not change the core meaning.
 2. DO NOT MIX LANGUAGES IN FIELDS: The 'word' field must contain ONLY the English word/phrase (e.g. "Classroom"). Do NOT add Vietnamese translation text or separators (like " - lớp học") into the 'word' or 'sentence' fields.
 3. GRAMMATICAL ACCURACY: Double check all English grammar. Every sentence must be grammatically correct and natural for children.
 4. Every card must have a word and a matching sentence.
@@ -732,31 +732,27 @@ CRITICAL SYSTEM REQUIREMENTS (GIỮ NGUYÊN ĐẦU VÀO - KHÔNG SÁNG TẠO):
         prompt += `\nAdditional Focus: Prioritize and guide the selection of these vocabulary words around this topic: "${topic}".`;
       }
     } else if (rawContent) {
-      const inputItems = parseRawContent(rawContent);
-      const inputCount = inputItems.length;
-      prompt = `Please optimize or create an English learning curriculum based entirely on the following raw text list.
-You MUST generate EXACTLY ${inputCount} vocabulary cards in your response — one for each input item. The number of objects in the "words" array MUST equal ${inputCount}.
+      prompt = `Please create an English learning curriculum based entirely on the following raw text provided by the user.
 
-Here is the parsed input list of ${inputCount} items:
-${inputItems.map((item, i) => `${i + 1}. English Word/Phrase: "${item.english}"${item.vietnamese ? `, Vietnamese Translation: "${item.vietnamese}"` : ""}`).join('\n')}
+User Input Text:
+"""
+${rawContent}
+"""
 
-CRITICAL SYSTEM REQUIREMENTS (GIỮ NGUYÊN ĐẦU VÀO - KHÔNG SÁNG TẠO):
-1. PRESERVE ORIGINAL ENGLISH WORDS: You MUST use the exact English words/phrases listed above (e.g., "${inputItems[0]?.english}"). Do NOT add Vietnamese translation text or separators (like " - lớp học") into the "word" field. The "word" field must contain ONLY the English word/phrase.
+CRITICAL SYSTEM REQUIREMENTS (GIỮ NGUYÊN ĐẦU VÀO - KHÔNG THÊM BỚT):
+1. EXTRACT & PRESERVE: Extract ALL distinct English vocabulary words from the text above. You MUST keep the EXACT number of vocabulary items provided by the user. Do not add any extra words, and do not skip any words. As an expert teacher, fix any grammatical mistakes. If the user provided Vietnamese meanings, use them but correct them if they are unnatural.
 2. GRAMMATICAL ACCURACY: Double check all English grammar. Every sentence must be grammatically correct and natural for children.
-3. If the input list includes a Vietnamese translation, use that translation for the 'translation' field (or optimize it to be child-friendly). If no translation is provided, translate it accurately to Vietnamese.
-4. If the input item already contains a full sentence, use that sentence in the "sentence" field. Otherwise, write a simple, grammatically perfect English sentence containing the word.
-5. TRANSLATION RULE (DỊCH TIẾNG VIỆT CHUẨN, KHÔNG DỊCH TRỘN TIẾNG ANH):
-- The 'translation' field MUST contain the direct Vietnamese translation of the core vocabulary word. NEVER output the English word itself or any English text in the 'translation' field. (E.g. If the word is 'Teacher', translation MUST be 'Giáo viên' or 'Cô giáo/Thầy giáo', NEVER 'Teacher').
-- The 'sentenceTranslation' field MUST contain the direct, natural-sounding, child-friendly Vietnamese translation of the 'sentence'. Do NOT mix English words or write parenthesized English phrases. (E.g. If the sentence is 'I like my teacher.', sentenceTranslation MUST be 'Tôi yêu cô giáo của tôi.', NEVER 'Tớ thích teacher.' or '(Tớ thích teacher.)').
-6. Provide fully detailed fields for each word as requested:
+3. If the input text includes a full sentence for a word, use that sentence in the "sentence" field. Otherwise, write a simple, grammatically perfect English sentence containing the word.
+4. TRANSLATION RULE (DỊCH TIẾNG VIỆT CHUẨN, KHÔNG DỊCH TRỘN TIẾNG ANH):
+- The 'translation' field MUST contain the direct Vietnamese translation of the core vocabulary word. NEVER output the English word itself or any English text in the 'translation' field. (E.g. If the word is 'Teacher', translation MUST be 'Giáo viên', NEVER 'Teacher').
+- The 'sentenceTranslation' field MUST contain the direct, natural-sounding, child-friendly Vietnamese translation of the 'sentence'. Do NOT mix English words or write parenthesized English phrases.
+5. Provide fully detailed fields for each word as requested:
 - word: The clean English word (with no Vietnamese meaning/translation text inside it).
 - translation: The direct Vietnamese translation.
 - phonetic: Correct IPA phonetic representation (using actual IPA symbols like '/ˈtiːtʃə(r)/').
 - sentence: The English example sentence.
 - sentenceTranslation: The matching Vietnamese translation of the English example sentence.
-- illustration: Exactly one cute emoji representing the word.
-
-FINAL REMINDER: Your output MUST contain exactly ${inputCount} items in the "words" array. Count them before responding.`;
+- illustration: Exactly one cute emoji representing the word.`;
     } else if (topic) {
       prompt = `Please create an engaging English vocabulary course suitable for: ${ageRange}.
 The topic is: "${topic}".
@@ -804,14 +800,14 @@ REMINDER: Output MUST contain ${currentLevelConfig.wordCount} vocabulary items. 
           model: modelName,
           contents: contentsPayload,
           config: {
-            systemInstruction: `You are an expert children's English teacher with many years of experience (giáo viên tiếng Anh tiểu học và mầm non nhiều năm kinh nghiệm).
-Your English sentences MUST be 100% grammatically correct, natural, simple, and age-appropriate for kids. Never write grammatically incorrect sentences or run-on sentences.
-Respond ONLY in valid JSON conforming to the structured schema specified. Avoid complex words. Keep example sentences strictly positive and action-oriented for children. Use clear, vivid, child-pleasing Emojis for the illustration fields.
+            systemInstruction: `You are an expert children's English teacher with 20 years of experience (giáo viên giỏi tiếng Anh 20 năm kinh nghiệm dạy tiểu học).
+Your goal is to design professional, engaging, and highly effective English lessons for young children. Your English sentences MUST be 100% grammatically correct, natural, simple, and age-appropriate.
+Respond ONLY in valid JSON conforming to the structured schema specified. Keep example sentences strictly positive, action-oriented, and educational. Use clear, vivid, child-pleasing Emojis for the illustration fields.
 
 CRITICAL RULES:
-1. PURE VIETNAMESE TRANSLATION (KHÔNG DỊCH TRỘN TIẾNG ANH): The 'translation' field must be the DIRECT VIETNAMESE translation of the word (e.g., 'con mèo', 'quả táo'), and the 'sentenceTranslation' field must be the DIRECT VIETNAMESE translation of the example sentence (e.g., 'Chú mèo nhỏ kêu meow meow.'). Do NOT mix English words, explanations, or definitions into these translation fields. NEVER write the English word inside the Vietnamese translation fields (e.g. never write 'Teacher' as translation for 'Teacher', it must be 'Giáo viên'; and never write 'Tớ thích teacher.' as translation for 'I like teacher.', it must be 'Tôi yêu cô giáo của tôi.').
-2. PRESERVE ORIGINAL CONTENT (GIỮ NGUYÊN ĐẦU VÀO - KHÔNG SÁNG TẠO): If the user provides explicit English words, text, or uploads a document/image, you must preserve and retain those exact English words and their matching sentences, correcting only spelling mistakes. Do not replace them with unrelated words, do not create new custom sentences if the input already contains sentences. Do not be creative.
-3. ABSOLUTE RULE ON QUANTITY: When the user provides a list of N words, you MUST output EXACTLY N vocabulary items. Never output fewer items than the user provided. Count the input items and ensure your output array has the same count. Truncating or reducing the user's word list is STRICTLY FORBIDDEN.`,
+1. PURE VIETNAMESE TRANSLATION: The 'translation' field must be the DIRECT VIETNAMESE translation of the word. NEVER write the English word inside the Vietnamese translation fields. The 'sentenceTranslation' field must be the DIRECT, natural Vietnamese translation of the example sentence.
+2. PRESERVE ORIGINAL CONTENT (GIỮ NGUYÊN ĐẦU VÀO - KHÔNG THÊM BỚT): If the user provides explicit English words, text, or an image, you MUST preserve and retain those exact English words and their matching sentences. Do not add any new words, and do not remove any. Maintain the exact quantity of vocabulary items as provided by the user. If they only provided words, you must create sentences for them.
+3. QUANTITY RULE: When the user provides a list of words or text/image, you MUST output EXACTLY the same number of vocabulary items as distinct words found in the input. For topic-based generation without input list, strictly aim for the requested word count.`,
             responseMimeType: "application/json",
             responseSchema: {
               type: Type.OBJECT,
@@ -823,7 +819,7 @@ CRITICAL RULES:
                 },
                 words: {
                   type: Type.ARRAY,
-                  description: `List of English vocabulary words. CRITICAL: If the user provided a raw text list or uploaded file, you MUST output ALL words from the input without any truncation — the output count MUST match the input count exactly. Never reduce, skip, or limit the list. For topic-based generations, provide exactly ${currentLevelConfig.wordCount} items matching the student's level.`,
+                  description: `List of English vocabulary words. Extract all necessary words based on the prompt instructions. For topic-based generations, provide exactly ${currentLevelConfig.wordCount} items matching the student's level.`,
                   items: {
                     type: Type.OBJECT,
                     required: ["word", "translation", "phonetic", "sentence", "sentenceTranslation", "illustration"],
@@ -890,47 +886,7 @@ CRITICAL RULES:
         });
       }
 
-      // POST-GENERATION VALIDATION: Ensure output count matches input count for rawContent
-      if (rawContent && parsedData.words && Array.isArray(parsedData.words)) {
-        const inputItems = parseRawContent(rawContent);
-        const inputCount = inputItems.length;
-        const outputCount = parsedData.words.length;
-        
-        if (outputCount < inputCount) {
-          console.warn(`[Gemini Validation] Output has ${outputCount} words but input had ${inputCount}. Filling missing ${inputCount - outputCount} words.`);
-          
-          const existingWordsLower = new Set(parsedData.words.map((w: any) => w.word?.toLowerCase()));
-          
-          for (const item of inputItems) {
-            if (!existingWordsLower.has(item.english.toLowerCase())) {
-              const capitalizedWord = item.english.charAt(0).toUpperCase() + item.english.slice(1).toLowerCase();
-              const isSentence = item.english.trim().split(/\s+/).length > 1;
-              const translation = item.vietnamese || getFallbackTranslation(item.english);
-              
-              const dictEntry = getOrGenerateEntry(capitalizedWord);
-              const fallbackPhonetic = `/${capitalizedWord.toLowerCase().replace(/[^a-z\s]/g, "")}/`;
-              const newWordItem = {
-                word: capitalizedWord,
-                translation: translation,
-                phonetic: dictEntry ? dictEntry.phonetic : fallbackPhonetic,
-                sentence: isSentence ? capitalizedWord : (dictEntry && dictEntry.sentence ? dictEntry.sentence : `I like my ${capitalizedWord.toLowerCase()}.`),
-                sentenceTranslation: isSentence ? translation : (dictEntry && dictEntry.sentenceTranslation ? dictEntry.sentenceTranslation : `Tôi yêu ${translation.toLowerCase()} của tôi.`),
-                illustration: getFallbackIllustration(item.english),
-              };
-              
-              const cleanedWordItem = cleanAndFixVocabularyItem(newWordItem);
-              
-              parsedData.words.push({
-                ...cleanedWordItem,
-                id: `w-${Date.now()}-fill-${parsedData.words.length}`,
-                category: topic || "Uploaded List",
-              });
-            }
-          }
-          
-          console.log(`[Gemini Validation] After fill, total words: ${parsedData.words.length}`);
-        }
-      }
+
 
       return res.json(parsedData);
     } else {
