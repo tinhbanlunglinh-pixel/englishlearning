@@ -1306,14 +1306,29 @@ export default function App() {
           };
         });
       } else {
-        defaultSamples = (studentLevel === "pre-starter" || studentLevel === "starter" || studentLevel === "preschool") ? [
-          { id: "sfa1", word: "Apple", translation: "Quả táo", phonetic: "/ˈæp.əl/", sentence: "The red apple is sweet.", sentenceTranslation: "Quả táo đỏ rất là ngọt.", illustration: "🍎", category: "Fruits" },
-          { id: "sfa2", word: "Banana", translation: "Quả chuối", phonetic: "/bəˈnɑː.nə/", sentence: "A yellow banana is yummy.", sentenceTranslation: "Quả chuối vàng ăn thật là ngon lành.", illustration: "🍌", category: "Fruits" },
-          { id: "sfa3", word: "Orange", translation: "Quả cam", phonetic: "/ˈɒr.ɪndʒ/", sentence: "I love drinking orange juice.", sentenceTranslation: "Tớ rất thích uống nước cam.", illustration: "🍊", category: "Fruits" }
-        ] : [
-          { id: "sfs1", word: "Computer", translation: "Máy tính", phonetic: "/kəmˈpjuː.tər/", sentence: "We play fun educational games on the computer.", sentenceTranslation: "Chúng tớ chơi những trò chơi học tập bổ ích trên máy tính.", illustration: "💻", category: "Tech" },
-          { id: "sfs2", word: "Schoolbag", translation: "Cặp sách", phonetic: "/ˈskuːl.bæɡ/", sentence: "I put my new books inside my schoolbag.", sentenceTranslation: "Tớ cất những quyển sách mới vào trong cặp học sinh của tớ.", illustration: "🎒", category: "School" }
-        ];
+        const normalizedTopic = (studentTopic || "").toLowerCase();
+        if (normalizedTopic.includes("animal") || normalizedTopic.includes("thú") || normalizedTopic.includes("vật")) {
+          defaultSamples = [
+            { id: "sfa1", word: "Cat", translation: "Con mèo", phonetic: "/kæt/", sentence: "The little cat is sleeping.", sentenceTranslation: "Chú mèo nhỏ đang ngủ.", illustration: "🐱", category: "Animals" },
+            { id: "sfa2", word: "Dog", translation: "Con chó", phonetic: "/dɒɡ/", sentence: "The happy dog wags its tail.", sentenceTranslation: "Chú chó vui vẻ vẫy đuôi.", illustration: "🐶", category: "Animals" },
+            { id: "sfa3", word: "Bird", translation: "Con chim", phonetic: "/bɜːd/", sentence: "The colorful bird sings softly.", sentenceTranslation: "Chú chim nhiều màu sắc hót líu lo ngọt ngào.", illustration: "🐦", category: "Animals" }
+          ];
+        } else if (normalizedTopic.includes("trái") || normalizedTopic.includes("quả") || normalizedTopic.includes("fruit") || normalizedTopic.includes("ăn")) {
+          defaultSamples = [
+            { id: "sfa1", word: "Apple", translation: "Quả táo", phonetic: "/ˈæp.əl/", sentence: "The red apple is sweet.", sentenceTranslation: "Quả táo đỏ rất là ngọt.", illustration: "🍎", category: "Fruits" },
+            { id: "sfa2", word: "Banana", translation: "Quả chuối", phonetic: "/bəˈnɑː.nə/", sentence: "A yellow banana is yummy.", sentenceTranslation: "Quả chuối vàng ăn thật là ngon lành.", illustration: "🍌", category: "Fruits" },
+            { id: "sfa3", word: "Orange", translation: "Quả cam", phonetic: "/ˈɒr.ɪndʒ/", sentence: "I love drinking orange juice.", sentenceTranslation: "Tớ rất thích uống nước cam.", illustration: "🍊", category: "Fruits" }
+          ];
+        } else {
+          defaultSamples = (studentLevel === "pre-starter" || studentLevel === "starter" || studentLevel === "preschool") ? [
+            { id: "sfa1", word: "Apple", translation: "Quả táo", phonetic: "/ˈæp.əl/", sentence: "The red apple is sweet.", sentenceTranslation: "Quả táo đỏ rất là ngọt.", illustration: "🍎", category: "Fruits" },
+            { id: "sfa2", word: "Banana", translation: "Quả chuối", phonetic: "/bəˈnɑː.nə/", sentence: "A yellow banana is yummy.", sentenceTranslation: "Quả chuối vàng ăn thật là ngon lành.", illustration: "🍌", category: "Fruits" },
+            { id: "sfa3", word: "Orange", translation: "Quả cam", phonetic: "/ˈɒr.ɪndʒ/", sentence: "I love drinking orange juice.", sentenceTranslation: "Tớ rất thích uống nước cam.", illustration: "🍊", category: "Fruits" }
+          ] : [
+            { id: "sfs1", word: "Computer", translation: "Máy tính", phonetic: "/kəmˈpjuː.tər/", sentence: "We play fun educational games on the computer.", sentenceTranslation: "Chúng tớ chơi những trò chơi học tập bổ ích trên máy tính.", illustration: "💻", category: "Tech" },
+            { id: "sfs2", word: "Schoolbag", translation: "Cặp sách", phonetic: "/ˈskuːl.bæɡ/", sentence: "I put my new books inside my schoolbag.", sentenceTranslation: "Tớ cất những quyển sách mới vào trong cặp học sinh của tớ.", illustration: "🎒", category: "School" }
+          ];
+        }
       }
 
       const newLesson: Lesson = {
