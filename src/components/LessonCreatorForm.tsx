@@ -104,18 +104,6 @@ export const LessonCreatorForm: React.FC<LessonCreatorFormProps> = ({
         <div className="inline-flex bg-slate-100 p-1.5 rounded-2xl w-full border border-slate-200">
           <button
             type="button"
-            onClick={() => { setCreateMethod("topic"); playSound.playTing(); }}
-            className={`flex-1 py-3 px-2 rounded-xl font-sans font-black text-xs transition-all duration-250 flex items-center justify-center gap-1.5 cursor-pointer ${
-              createMethod === "topic"
-                ? "bg-[#10c469] text-white shadow-md scale-[1.02]"
-                : "text-slate-600 hover:text-slate-800 bg-transparent"
-            }`}
-          >
-            <span className="text-sm">💡</span>
-            <span>{t("Topic", "Chủ đề")}</span>
-          </button>
-          <button
-            type="button"
             onClick={() => { setCreateMethod("text"); playSound.playTing(); }}
             className={`flex-1 py-3 px-2 rounded-xl font-sans font-black text-xs transition-all duration-250 flex items-center justify-center gap-1.5 cursor-pointer ${
               createMethod === "text"
@@ -143,17 +131,7 @@ export const LessonCreatorForm: React.FC<LessonCreatorFormProps> = ({
 
       {/* Interactive Input Box */}
       <div className="bg-[#f0f9f4] p-6 rounded-3xl border border-emerald-100/50 text-center max-w-2xl mx-auto w-full">
-        {createMethod === "topic" && (
-          <div className="w-full">
-            <input
-              type="text"
-              placeholder={t("Enter topic (e.g. Animals, My Family...)", "Nhập chủ đề (VD: Animals, My Family...)")}
-              value={studentTopic}
-              onChange={(e) => setStudentTopic(e.target.value)}
-              className="w-full bg-transparent text-emerald-950 placeholder-emerald-700/40 border-0 focus:outline-none focus:ring-0 text-center font-sans font-black text-sm md:text-base tracking-wide"
-            />
-          </div>
-        )}
+
 
         {createMethod === "text" && (
           <div className="w-full">

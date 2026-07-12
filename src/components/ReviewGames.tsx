@@ -593,14 +593,9 @@ export const ReviewGames: React.FC<ReviewGamesProps> = ({
                 </p>
                 
                 {/* Visual Hint */}
-                <div className="bg-amber-50 p-3 rounded-xl border-2 border-amber-200 max-w-lg mx-auto mb-6 flex items-center justify-center gap-3">
+                <div className="bg-amber-50 p-3 rounded-xl border-2 border-amber-200 w-24 mx-auto mb-6 flex flex-col items-center justify-center gap-1 shadow-sm">
+                  <p className="text-[10px] text-amber-600 font-bold uppercase tracking-wider">Hint</p>
                   <span className="text-4xl">{targetWord.illustration}</span>
-                  <div className="text-left">
-                    <p className="text-xs text-amber-600 font-bold uppercase">Hint</p>
-                    <p className="font-bold text-amber-800 text-sm leading-tight">
-                      {targetWord.sentenceTranslation}
-                    </p>
-                  </div>
                 </div>
 
                 {/* Scrambled Pool */}

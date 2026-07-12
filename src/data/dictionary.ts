@@ -99,7 +99,22 @@ export function getFallbackIllustrationClient(word: string): string {
     "frog": "🐸",
     "apple": "🍎",
     "banana": "🍌",
-    "orange": "🍊"
+    "orange": "🍊",
+    "watermelon": "🍉",
+    "cherry": "🍒",
+    "strawberry": "🍓",
+    "lemon": "🍋",
+    "peach": "🍑",
+    "pear": "🍐",
+    "mango": "🥭",
+    "pineapple": "🍍",
+    "grape": "🍇",
+    "grapes": "🍇",
+    "melon": "🍈",
+    "kiwi": "🥝",
+    "coconut": "🥥",
+    "avocado": "🥑",
+    "tomato": "🍅"
   };
   const key = word.toLowerCase().trim().replace(/[.,?!]/g, "");
   if (dict[key]) return dict[key];

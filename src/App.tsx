@@ -284,7 +284,7 @@ export default function App() {
   const [studentRawContent, setStudentRawContent] = useState("");
   const [studentLevel, setStudentLevel] = useState<string>("starter");
   const [language, setLanguage] = useState<"en" | "bilingual">("en");
-  const [createMethod, setCreateMethod] = useState<"topic" | "text" | "image">("topic");
+  const [createMethod, setCreateMethod] = useState<"topic" | "text" | "image">("text");
   
   const t = (en: string, vi: string) => {
     return en;
