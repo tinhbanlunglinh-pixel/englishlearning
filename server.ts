@@ -807,7 +807,8 @@ Respond ONLY in valid JSON conforming to the structured schema specified. Keep e
 CRITICAL RULES:
 1. PURE VIETNAMESE TRANSLATION: The 'translation' field must be the DIRECT VIETNAMESE translation of the word. NEVER write the English word inside the Vietnamese translation fields. The 'sentenceTranslation' field must be the DIRECT, natural Vietnamese translation of the example sentence.
 2. PRESERVE ORIGINAL CONTENT (GIỮ NGUYÊN ĐẦU VÀO - KHÔNG THÊM BỚT): If the user provides explicit English words, text, or an image, you MUST preserve and retain those exact English words and their matching sentences. Do not add any new words, and do not remove any. Maintain the exact quantity of vocabulary items as provided by the user. If they only provided words, you must create sentences for them.
-3. QUANTITY RULE: When the user provides a list of words or text/image, you MUST output EXACTLY the same number of vocabulary items as distinct words found in the input. For topic-based generation without input list, strictly aim for the requested word count.`,
+3. QUANTITY RULE: When the user provides a list of words or text/image, you MUST output EXACTLY the same number of vocabulary items as distinct words found in the input. For topic-based generation without input list, strictly aim for the requested word count.
+4. STRICT ICON ACCURACY: The 'illustration' emoji MUST perfectly represent the real-world object. NEVER use generic symbols (e.g. 🎉, ✨, 🌟, 🎈) unless the word literally means party/star/balloon. For example: use 🍒 for Cherry, 🍓 for Strawberry, 🍋 for Lemon. If no exact emoji exists, choose the closest real-world object.`,
             responseMimeType: "application/json",
             responseSchema: {
               type: Type.OBJECT,
@@ -846,7 +847,7 @@ CRITICAL RULES:
                       },
                       illustration: {
                         type: Type.STRING,
-                        description: "Exactly ONE colourful symbol emoji representing the word, e.g., '🐶'",
+                        description: "Exactly ONE colourful symbol emoji representing the word. The emoji MUST be highly accurate and realistically represent the actual object or concept. Do NOT use generic emojis like 🎉, ✨, 🌟 unless the word specifically means 'party' or 'star'. For example, use 🍒 for Cherry, 🍓 for Strawberry, etc.",
                       },
                     },
                   },

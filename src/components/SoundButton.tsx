@@ -147,24 +147,24 @@ function getExpressiveConfig(text: string, slow: boolean): SpeechConfig {
   const isShortSentence = wordCount <= 5;
 
   if (isSingleWord) {
-    // Single word: Speak clearly, slightly slower, with warm pitch
+    // Single word: Speak clearly, slightly slower, with natural pitch
     return {
       rate: slow ? 0.6 : 0.85,
-      pitch: 1.4,   // Youthful, energetic, high pitch
+      pitch: 1.05,   // Keep close to 1.0 to preserve native voice quality
       volume: 1.0,
     };
   } else if (isShortSentence) {
-    // Short sentence (Pre-starters/Starters): Clear, playful, engaging
+    // Short sentence: Clear, engaging, natural
     return {
       rate: slow ? 0.65 : 0.9,
-      pitch: 1.35,   // Playful and energetic
+      pitch: 1.02,   // Keep close to 1.0 to preserve native voice quality
       volume: 1.0,
     };
   } else {
-    // Longer sentence (Movers/Flyers): Natural flow with good rhythm
+    // Longer sentence: Natural flow with good rhythm
     return {
       rate: slow ? 0.7 : 0.95,
-      pitch: 1.25,   // Expressive and young
+      pitch: 1.0,    // Standard native pitch
       volume: 1.0,
     };
   }
