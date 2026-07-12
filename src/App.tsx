@@ -1294,13 +1294,32 @@ export default function App() {
           const translation = item.vietnamese || (dictEntry ? dictEntry.translation : capitalizedWord);
           const fallbackPhonetic = `/${item.english.toLowerCase().replace(/[^a-z\s]/g, "")}/`;
           
+          let genSentence = capitalizedWord;
+          let genTrans = translation;
+          
+          if (!isSentence) {
+            if (dictEntry && dictEntry.sentence) {
+              genSentence = dictEntry.sentence;
+              genTrans = dictEntry.sentenceTranslation;
+            } else {
+              const lw = item.english.toLowerCase();
+              if (studentLevel === "flyers" || studentLevel === "movers") {
+                genSentence = `I can see the ${lw}.`;
+                genTrans = translation === capitalizedWord ? `Mình có thể thấy ${lw}.` : `Mình có thể thấy ${translation.toLowerCase()}.`;
+              } else {
+                genSentence = `It is a ${lw}.`;
+                genTrans = translation === capitalizedWord ? `Đây là ${lw}.` : `Đây là ${translation.toLowerCase()}.`;
+              }
+            }
+          }
+          
           return {
             id: `sfa-input-${idx}`,
             word: capitalizedWord,
             translation: translation,
             phonetic: dictEntry ? dictEntry.phonetic : fallbackPhonetic,
-            sentence: isSentence ? capitalizedWord : (dictEntry && dictEntry.sentence ? dictEntry.sentence : `I like my ${item.english.toLowerCase()}.`),
-            sentenceTranslation: isSentence ? translation : (dictEntry && dictEntry.sentenceTranslation ? dictEntry.sentenceTranslation : `Tôi yêu ${translation.toLowerCase()} của tôi.`),
+            sentence: genSentence,
+            sentenceTranslation: genTrans,
             illustration: getFallbackIllustrationClient(item.english),
             category: studentTopic || "Uploaded List",
           };
