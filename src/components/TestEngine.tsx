@@ -166,17 +166,55 @@ export const TestEngine: React.FC<TestEngineProps> = ({
         });
       } 
       else if (type === "match_picture") {
-        const slice = [...words].sort(() => 0.5 - Math.random()).slice(0, 3);
-        const pairs = slice.map((w) => ({ image: w.illustration, word: w.word }));
+        const genericEmojis = ["✨", "🌟", "💫", "⭐", "🎯", "🧩", "💡", "🔔", "🎵", "🎶", "💮", "💠", "🌈", "💎", "🔮", "🪄", "🏆", "🏅", "🎨", "🎈", "🎉", "🎊", "🎀", "🎁", "🧸"];
+        const uniqueIllustrationWords: VocabularyItem[] = [];
+        const seenImages = new Set<string>();
+        const shuffled = [...words].sort(() => 0.5 - Math.random());
         
-        list.push({
-          id,
-          type,
-          questionText: "Match each picture with the correct word:",
-          matchPairs: pairs,
-          correctAnswer: JSON.stringify(pairs),
-        });
-      } 
+        // Priority 1: Words with non-generic, unique illustrations
+        for (const w of shuffled) {
+          if (!genericEmojis.includes(w.illustration) && !seenImages.has(w.illustration)) {
+            seenImages.add(w.illustration);
+            uniqueIllustrationWords.push(w);
+          }
+        }
+        
+        // Priority 2: If we still need more, use generic but unique illustrations
+        if (uniqueIllustrationWords.length < 3) {
+          for (const w of shuffled) {
+            if (!seenImages.has(w.illustration)) {
+              seenImages.add(w.illustration);
+              uniqueIllustrationWords.push(w);
+            }
+            if (uniqueIllustrationWords.length >= 3) break;
+          }
+        }
+
+        if (uniqueIllustrationWords.length < 3) {
+          // Fallback to multiple_choice if not enough unique images
+          const isTranslationSame = target.translation.toLowerCase() === target.word.toLowerCase();
+          const opts = [target.word, ...getClashOptions(target, 3)].sort(() => 0.5 - Math.random());
+          list.push({
+            id,
+            type: "multiple_choice",
+            questionText: isTranslationSame ? `Look at the picture. What is this?` : `Which word means: "${target.translation}"?`,
+            options: opts,
+            correctAnswer: target.word,
+            imageUrl: target.illustration,
+          });
+        } else {
+          const slice = uniqueIllustrationWords.slice(0, 3);
+          const pairs = slice.map((w) => ({ image: w.illustration, word: w.word }));
+          
+          list.push({
+            id,
+            type,
+            questionText: "Match each picture with the correct word:",
+            matchPairs: pairs,
+            correctAnswer: JSON.stringify(pairs),
+          });
+        }
+      }
       else if (type === "arrange_sentence") {
         const cleanStr = target.sentence.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").trim();
         list.push({
